@@ -28,8 +28,6 @@ Run these commands:
 
 `gcloud auth application-default login` - obtains your ADC (Application Default Credentials), which terraform will later use automatically to authenticate with Google Cloud
 
-`gcloud services enable storage.googleapis.com secretmanager.googleapis.com appenginereporting.googleapis.com sql-component.googleapis.com` - enables required services in your project
-
 ## 3. Set variables inside `locals.tf`
 
 ## 4. Create bucket for terraform backend in Google Cloud Storage 

@@ -3,6 +3,11 @@ provider "google" {
   region  = var.tfstate_bucket_region
 }
 
+resource "google_project_service" "storage_service" {
+  project = var.project_id
+  service = "storage.googleapis.com"
+}
+
 resource "random_id" "tfstate_bucket_prefix" {
   byte_length = 8
 }
