@@ -7,13 +7,13 @@ resource "google_secret_manager_secret_iam_member" "service_account_secret_acces
   # Wait for the service account to be created before assigning roles
   depends_on = [
     google_app_engine_application.zosia_site,
-    data.google_app_engine_default_service_account.default 
+    data.google_app_engine_default_service_account.default
   ]
 }
 
 # Required for App Engine app to access Cloud SQL in runtime
 resource "google_project_iam_binding" "service_account_cloudsql_client" {
-  project = var.project_id
+  project = local.project_id
   role    = "roles/cloudsql.client"
 
   members = [

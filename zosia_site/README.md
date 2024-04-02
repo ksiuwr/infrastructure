@@ -30,7 +30,7 @@ Run these commands:
 
 `gcloud services enable storage.googleapis.com secretmanager.googleapis.com appenginereporting.googleapis.com sql-component.googleapis.com` - enables required services in your project
 
-## 3. Set variables inside `terraform.tfvars`
+## 3. Set variables inside `locals.tf`
 
 ## 4. Create bucket for terraform backend in Google Cloud Storage 
 

@@ -1,6 +1,6 @@
 resource "google_app_engine_application" "zosia_site" {
-  project     = var.project_id
-  location_id = var.region
+  project     = local.project_id
+  location_id = local.region
 }
 
 data "google_app_engine_default_service_account" "default" {

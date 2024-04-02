@@ -1,15 +1,15 @@
 resource "google_sql_database" "db" {
-  name     = var.db_settings.db_name
+  name     = local.db_settings.db_name
   instance = google_sql_database_instance.db_instance.name
 }
 
 resource "google_sql_database_instance" "db_instance" {
-  name             = var.db_settings.instance_name
-  database_version = var.db_settings.database_version
+  name             = local.db_settings.instance_name
+  database_version = local.db_settings.database_version
 
   settings {
-    tier      = var.db_settings.database_tier
-    edition   = var.db_settings.database_edition
+    tier      = local.db_settings.database_tier
+    edition   = local.db_settings.database_edition
     disk_size = 10
 
     backup_configuration {
@@ -39,7 +39,7 @@ resource "google_sql_database_instance" "db_instance" {
 }
 
 resource "google_sql_user" "db_user" {
-  name     = var.db_settings.username
+  name     = local.db_settings.username
   instance = google_sql_database_instance.db_instance.name
   password = random_password.db_password.result
 }

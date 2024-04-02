@@ -1,10 +1,10 @@
 module "bootstrap" {
   source                = "./bootstrap"
-  tfstate_bucket_region = var.region
-  project_id            = var.project_id
+  tfstate_bucket_region = local.region
+  project_id            = local.project_id
 }
 
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project = local.project_id
+  region  = local.region
 }
