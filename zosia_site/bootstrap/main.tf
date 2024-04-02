@@ -16,4 +16,14 @@ resource "google_storage_bucket" "tfstate_bucket" {
   versioning {
     enabled = true
   }
+
+  lifecycle_rule {
+    condition {
+      num_newer_versions = 100
+    }
+
+    action {
+      type = "Delete"
+    }
+  }
 }
