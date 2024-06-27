@@ -19,3 +19,14 @@ resource "google_project_iam_binding" "service_account_cloudsql_client" {
     google_service_account.cloudrun_service_account.member
   ]
 }
+
+# Required for Cloud Run to access Cloud Storage with static files in runtime
+resource "google_project_iam_binding" "cloud_storage_admin" {
+  project = local.project_id
+  role    = "roles/storage.objectAdmin"
+
+  members = [
+    google_service_account.cloudrun_service_account.member
+  ]
+
+}

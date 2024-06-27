@@ -34,6 +34,32 @@ resource "google_cloud_run_v2_job" "migrate" {
   }
 }
 
+resource "google_cloud_run_v2_job" "collectstatic" {
+  name     = "collectstatic"
+  location = local.region
+
+  template {
+    template {
+      service_account = google_service_account.cloudrun_service_account.email
+
+      containers {
+        image   = "${local.region}-docker.pkg.dev/${local.project_id}/${google_artifact_registry_repository.zosia-repo.repository_id}/${local.docker_image_name}:latest"
+        command = ["./scripts/collectstatic.sh"]
+
+        env {
+          name  = "GOOGLE_CLOUD_PROJECT"
+          value = local.project_id
+        }
+
+        env {
+          name  = "GCS_BUCKET_NAME"
+          value = google_storage_bucket.static_files_bucket.name
+        }
+      }
+    }
+  }
+}
+
 resource "google_cloud_run_v2_service" "zosia_site" {
   name     = "zosia"
   location = local.region
@@ -48,6 +74,11 @@ resource "google_cloud_run_v2_service" "zosia_site" {
       env {
         name  = "GOOGLE_CLOUD_PROJECT"
         value = local.project_id
+      }
+
+      env {
+        name  = "GCS_BUCKET_NAME"
+        value = google_storage_bucket.static_files_bucket.name
       }
 
       # TODO: Add domain mapping to zosia.org and www.zosia.org
@@ -65,5 +96,29 @@ resource "google_cloud_run_v2_service_iam_member" "noauth" {
   name     = google_cloud_run_v2_service.zosia_site.name
   role     = "roles/run.invoker"
   member   = "allUsers"
+}
+
+resource "random_id" "static_files_bucket_prefix" {
+  byte_length = 8
+}
+
+resource "google_storage_bucket" "static_files_bucket" {
+  name          = "${random_id.static_files_bucket_prefix.hex}-static-files-bucket"
+  location      = local.region
+  force_destroy = false
+  storage_class = "STANDARD"
+
+  cors {
+    origin          = ["*"]
+    method          = ["GET"]
+    response_header = ["*"]
+  }
+}
+
+# This allows anyone on the internet to view static files
+resource "google_storage_bucket_iam_member" "static_files_bucket_public" {
+  bucket = google_storage_bucket.static_files_bucket.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
 }
 
