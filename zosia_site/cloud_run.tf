@@ -1,3 +1,7 @@
+locals {
+  docker_image_url = "${local.region}-docker.pkg.dev/${local.project_id}/${google_artifact_registry_repository.zosia-repo.repository_id}/${local.docker_image_name}:latest"
+}
+
 resource "google_artifact_registry_repository" "zosia-repo" {
   location      = local.region
   repository_id = "zosia-repo"
@@ -22,7 +26,7 @@ resource "google_cloud_run_v2_job" "migrate" {
       service_account = google_service_account.cloudrun_service_account.email
 
       containers {
-        image   = "${local.region}-docker.pkg.dev/${local.project_id}/${google_artifact_registry_repository.zosia-repo.repository_id}/${local.docker_image_name}:latest"
+        image   = local.docker_image_url
         command = ["./scripts/migrate.sh"]
 
         env {
@@ -43,7 +47,7 @@ resource "google_cloud_run_v2_job" "collectstatic" {
       service_account = google_service_account.cloudrun_service_account.email
 
       containers {
-        image   = "${local.region}-docker.pkg.dev/${local.project_id}/${google_artifact_registry_repository.zosia-repo.repository_id}/${local.docker_image_name}:latest"
+        image   = local.docker_image_url
         command = ["./scripts/collectstatic.sh"]
 
         env {
@@ -68,7 +72,7 @@ resource "google_cloud_run_v2_service" "zosia_site" {
     service_account = google_service_account.cloudrun_service_account.email
 
     containers {
-      image   = "${local.region}-docker.pkg.dev/${local.project_id}/${google_artifact_registry_repository.zosia-repo.repository_id}/${local.docker_image_name}:latest"
+      image   = local.docker_image_url
       command = ["./scripts/start_prod_server.sh"]
 
       env {
