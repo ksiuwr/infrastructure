@@ -102,12 +102,8 @@ resource "google_cloud_run_v2_service_iam_member" "noauth" {
   member   = "allUsers"
 }
 
-resource "random_id" "static_files_bucket_prefix" {
-  byte_length = 8
-}
-
 resource "google_storage_bucket" "static_files_bucket" {
-  name          = "${random_id.static_files_bucket_prefix.hex}-static-files-bucket"
+  name          = "ksiuwr-zosia-static-files"
   location      = local.region
   force_destroy = false
   storage_class = "STANDARD"
