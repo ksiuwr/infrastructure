@@ -1,6 +1,6 @@
 resource "google_service_account" "cloudrun_service_account" {
-  account_id   = "cloudrun-service-account"
-  display_name = "Cloud Run Service Account"
+  account_id   = "zosia-cloudrun-service-account"
+  display_name = "Zosia website Cloud Run Service Account"
 }
 
 # Required for Cloud Run to access Secret Manager in runtime
