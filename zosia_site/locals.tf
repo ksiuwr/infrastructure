@@ -1,5 +1,5 @@
 locals {
-  project_id        = ""
+  project_id        = "<update this>"
   region            = "europe-central2"
   docker_image_name = "zosia_prod"
 

@@ -8,7 +8,7 @@ terraform {
 
   # Uncomment this block to use Google Cloud Storage as your backend.
   # backend "gcs" {
-  #   bucket = ""
+  #   bucket = "<update this>"
   #   prefix = "terraform/state"
   # }
 }
