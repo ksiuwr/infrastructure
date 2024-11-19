@@ -10,23 +10,17 @@ resource "google_secret_manager_secret_iam_member" "service_account_secret_acces
   member    = google_service_account.cloudrun_service_account.member
 }
 
-# Required for Cloud Run to access Cloud SQL in runtime
-resource "google_project_iam_binding" "service_account_cloudsql_client" {
+resource "google_project_iam_binding" "service_account_permissions" {
+  for_each = toset([
+    "roles/cloudsql.client",        # Required for Cloud Run to access Cloud SQL in runtime
+    "roles/storage.objectAdmin",    # Required for Cloud Run to access Cloud Storage with static files in runtime
+    "roles/artifactregistry.writer" # Required for uploading zosia Docker image to Artifact Registry during CI/CD
+  ])
+
   project = local.project_id
-  role    = "roles/cloudsql.client"
+  role    = each.value
 
   members = [
     google_service_account.cloudrun_service_account.member
   ]
-}
-
-# Required for Cloud Run to access Cloud Storage with static files in runtime
-resource "google_project_iam_binding" "cloud_storage_admin" {
-  project = local.project_id
-  role    = "roles/storage.objectAdmin"
-
-  members = [
-    google_service_account.cloudrun_service_account.member
-  ]
-
 }
