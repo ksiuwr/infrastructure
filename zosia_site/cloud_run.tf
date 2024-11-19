@@ -111,6 +111,17 @@ resource "google_cloud_run_v2_service" "zosia_site" {
   }
 }
 
+resource "google_cloud_run_domain_mapping" "zosia_domain" {
+  name     = "zosia.org"
+  location = google_cloud_run_v2_service.zosia_site.location
+  metadata {
+    namespace = local.project_id
+  }
+  spec {
+    route_name = google_cloud_run_v2_service.zosia_site.name
+  }
+}
+
 # This allows zosia website to be accessed by anyone without authentication
 resource "google_cloud_run_v2_service_iam_member" "noauth" {
   location = google_cloud_run_v2_service.zosia_site.location
