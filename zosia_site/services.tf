@@ -5,7 +5,8 @@ resource "google_project_service" "required_services" {
     "secretmanager.googleapis.com",
     "sql-component.googleapis.com",
     "artifactregistry.googleapis.com",
-    "run.googleapis.com"
+    "run.googleapis.com",
+    "cloudresourcemanager.googleapis.com"
   ])
 
   project = local.project_id
