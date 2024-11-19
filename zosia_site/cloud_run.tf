@@ -17,6 +17,48 @@ resource "google_artifact_registry_repository" "zosia-repo" {
   }
 }
 
+resource "google_cloud_run_v2_job" "createsuperuser" {
+  name     = "createsuperuser"
+  location = local.region
+
+  template {
+    template {
+      service_account = google_service_account.cloudrun_service_account.email
+
+      containers {
+        image   = local.docker_dummy_image_url
+        command = ["./scripts/createsuperuser.sh"]
+
+        env {
+          name  = "GOOGLE_CLOUD_PROJECT"
+          value = local.project_id
+        }
+
+        env {
+          name  = "DJANGO_SUPERUSER_USERNAME"
+          value = "admin"
+        }
+
+        env {
+          name  = "DJANGO_SUPERUSER_EMAIL"
+          value = "admin@zosia.org"
+        }
+
+        env {
+          name  = "DJANGO_SUPERUSER_PASSWORD"
+          value = ""
+        }
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      template[0].template[0].containers[0].image
+    ]
+  }
+}
+
 resource "google_cloud_run_v2_job" "migrate" {
   name     = "migrate"
   location = local.region
@@ -96,7 +138,6 @@ resource "google_cloud_run_v2_service" "zosia_site" {
         value = google_storage_bucket.static_files_bucket.name
       }
 
-      # TODO: Add domain mapping to zosia.org and www.zosia.org
       env {
         name  = "HOSTS"
         value = "zosia.org,www.zosia.org"
