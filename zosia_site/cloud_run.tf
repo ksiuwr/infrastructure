@@ -1,5 +1,5 @@
 locals {
-  docker_image_url = "${local.region}-docker.pkg.dev/${local.project_id}/${google_artifact_registry_repository.zosia-repo.repository_id}/${local.docker_image_name}:latest"
+  docker_dummy_image_url = "us-docker.pkg.dev/cloudrun/container/hello"
 }
 
 resource "google_artifact_registry_repository" "zosia-repo" {
@@ -26,7 +26,7 @@ resource "google_cloud_run_v2_job" "migrate" {
       service_account = google_service_account.cloudrun_service_account.email
 
       containers {
-        image   = local.docker_image_url
+        image   = local.docker_dummy_image_url
         command = ["./scripts/migrate.sh"]
 
         env {
@@ -35,6 +35,12 @@ resource "google_cloud_run_v2_job" "migrate" {
         }
       }
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      template[0].template[0].containers[0].image
+    ]
   }
 }
 
@@ -47,7 +53,7 @@ resource "google_cloud_run_v2_job" "collectstatic" {
       service_account = google_service_account.cloudrun_service_account.email
 
       containers {
-        image   = local.docker_image_url
+        image   = local.docker_dummy_image_url
         command = ["./scripts/collectstatic.sh"]
 
         env {
@@ -62,6 +68,12 @@ resource "google_cloud_run_v2_job" "collectstatic" {
       }
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      template[0].template[0].containers[0].image
+    ]
+  }
 }
 
 resource "google_cloud_run_v2_service" "zosia_site" {
@@ -72,8 +84,7 @@ resource "google_cloud_run_v2_service" "zosia_site" {
     service_account = google_service_account.cloudrun_service_account.email
 
     containers {
-      image   = local.docker_image_url
-      command = ["./scripts/start_prod_server.sh"]
+      image = local.docker_dummy_image_url
 
       env {
         name  = "GOOGLE_CLOUD_PROJECT"
@@ -88,9 +99,15 @@ resource "google_cloud_run_v2_service" "zosia_site" {
       # TODO: Add domain mapping to zosia.org and www.zosia.org
       env {
         name  = "HOSTS"
-        value = "zosia.org, www.zosia.org"
+        value = "zosia.org,www.zosia.org"
       }
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      template[0].containers[0].image
+    ]
   }
 }
 
@@ -102,8 +119,12 @@ resource "google_cloud_run_v2_service_iam_member" "noauth" {
   member   = "allUsers"
 }
 
+resource "random_id" "static_files_bucket_suffix" {
+  byte_length = 8
+}
+
 resource "google_storage_bucket" "static_files_bucket" {
-  name          = "ksiuwr-zosia-static-files"
+  name          = "ksiuwr-zosia-static-files-${random_id.static_files_bucket_suffix.hex}"
   location      = local.region
   force_destroy = false
   storage_class = "STANDARD"
