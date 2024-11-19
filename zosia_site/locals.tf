@@ -1,7 +1,6 @@
 locals {
-  project_id        = "<update this>"
-  region            = "europe-central2"
-  docker_image_name = "zosia_prod"
+  project_id = "<update this>"
+  region     = "europe-west4"
 
   db_settings = {
     username         = "zosia-admin"
