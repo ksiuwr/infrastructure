@@ -36,7 +36,7 @@ resource "google_cloud_run_v2_job" "createsuperuser" {
 
         env {
           name  = "DJANGO_SUPERUSER_USERNAME"
-          value = "admin"
+          value = "admin@zosia.org"
         }
 
         env {
@@ -47,6 +47,16 @@ resource "google_cloud_run_v2_job" "createsuperuser" {
         env {
           name  = "DJANGO_SUPERUSER_PASSWORD"
           value = ""
+        }
+
+        env {
+          name  = "DJANGO_SUPERUSER_FIRST_NAME"
+          value = "Admin"
+        }
+
+        env {
+          name  = "DJANGO_SUPERUSER_LAST_NAME"
+          value = "Zosiowicz"
         }
       }
     }
