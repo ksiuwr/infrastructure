@@ -1,6 +1,6 @@
 locals {
-  project_id = ""
-  region     = "europe-central2"
+  project_id = "<update this>"
+  region     = "europe-west4"
 
   db_settings = {
     username         = "zosia-admin"

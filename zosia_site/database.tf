@@ -23,7 +23,7 @@ resource "google_sql_database_instance" "db_instance" {
       # TODO: Currently the production zosia database is configured like this 
       # (no ssl and it accepts connections from every ip)
       # We should discuss if we want to change this
-      require_ssl = false
+      ssl_mode = "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
       authorized_networks {
         value = "0.0.0.0/0"
       }

@@ -1,16 +1,15 @@
 # Enables required services for the project
 
-resource "google_project_service" "secretmanager_service" {
-  project = local.project_id
-  service = "secretmanager.googleapis.com"
-}
+resource "google_project_service" "required_services" {
+  for_each = toset([
+    "secretmanager.googleapis.com",
+    "sql-component.googleapis.com",
+    "artifactregistry.googleapis.com",
+    "run.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "compute.googleapis.com"
+  ])
 
-resource "google_project_service" "appengine_service" {
   project = local.project_id
-  service = "appenginereporting.googleapis.com"
-}
-
-resource "google_project_service" "sql_service" {
-  project = local.project_id
-  service = "sql-component.googleapis.com"
+  service = each.value
 }
