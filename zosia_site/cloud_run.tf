@@ -163,7 +163,9 @@ resource "google_cloud_run_v2_service" "zosia_site" {
 }
 
 resource "google_cloud_run_domain_mapping" "zosia_domain" {
-  name     = "zosia.org"
+  for_each = toset(["zosia.org", "www.zosia.org"])
+
+  name     = each.value
   location = google_cloud_run_v2_service.zosia_site.location
   metadata {
     namespace = local.project_id
