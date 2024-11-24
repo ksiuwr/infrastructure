@@ -53,4 +53,10 @@ Run `terraform init -migrate-state`
 
 You might get errors about some services being disabled. If that happens, wait for a minute or two and run `terraform apply` one more time. The issue here is that while the terraform code automatically enables all required services, it usually takes some time before it propagates through Google's systems.
 
+When you create the infrastructure, terraform will create a new database. This process might take around 10-15 minutes, so be patient.
+
 ## 6. In Google Cloud Console Web UI fill in all empty variables inside `django_settings` in the Secret Manager
+
+## 7. Create a super user account
+
+The easiest way to create a first user with admin privileges is to run the `createsuperuser` Cloud Run job from Web UI and set all the environment variables to the new user's data (like password, email, etc.). Just make sure to change this password later, since everyone with access to the GCP project will be able to view provided environment variables!
