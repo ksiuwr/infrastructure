@@ -1,5 +1,5 @@
 locals {
-  project_id = "<update this>"
+  project_id = "zosia25"
   region     = "europe-west4"
 
   db_settings = {
