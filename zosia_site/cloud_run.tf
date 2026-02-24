@@ -134,6 +134,9 @@ resource "google_cloud_run_v2_service" "zosia_site" {
 
   template {
     service_account = google_service_account.cloudrun_service_account.email
+    scaling {
+      min_instance_count = 1
+    }
 
     containers {
       image = local.docker_dummy_image_url
