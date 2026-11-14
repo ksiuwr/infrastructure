@@ -3,6 +3,12 @@ resource "google_sql_database" "db" {
   instance = google_sql_database_instance.db_instance.name
 }
 
+# LEOSIA shares the instance (and the user) with ZOSIA, only the database is separate
+resource "google_sql_database" "leosia_db" {
+  name     = local.db_settings.leosia_db_name
+  instance = google_sql_database_instance.db_instance.name
+}
+
 resource "google_sql_database_instance" "db_instance" {
   name             = local.db_settings.instance_name
   database_version = local.db_settings.database_version

@@ -26,5 +26,11 @@ resource "google_secret_manager_secret_version" "django_settings_version" {
     CAPTCHA_PUBLIC=
     CAPTCHA_PRIVATE=
     EOT
+
+  # The real values are added as a newer version in the console (step 6 in README),
+  # after which this template version gets disabled - don't enable it again
+  lifecycle {
+    ignore_changes = [enabled]
+  }
 }
 

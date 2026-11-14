@@ -34,6 +34,12 @@ resource "google_cloud_run_v2_job" "createsuperuser" {
           value = local.project_id
         }
 
+        # Site whose database gets the new user, set to "leosia" to create a LEOSIA admin
+        env {
+          name  = "SITE"
+          value = "zosia"
+        }
+
         env {
           name  = "DJANGO_SUPERUSER_USERNAME"
           value = "admin@zosia.org"
@@ -153,7 +159,7 @@ resource "google_cloud_run_v2_service" "zosia_site" {
 
       env {
         name  = "HOSTS"
-        value = "zosia.org,www.zosia.org"
+        value = join(",", local.domains)
       }
     }
   }
@@ -166,7 +172,7 @@ resource "google_cloud_run_v2_service" "zosia_site" {
 }
 
 resource "google_cloud_run_domain_mapping" "zosia_domain" {
-  for_each = toset(["zosia.org", "www.zosia.org"])
+  for_each = toset(local.domains)
 
   name     = each.value
   location = google_cloud_run_v2_service.zosia_site.location
