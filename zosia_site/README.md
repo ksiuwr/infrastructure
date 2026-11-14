@@ -1,3 +1,8 @@
+This infrastructure serves both ZOSIA (zosia.org) and LEOSIA (leosia.org) from a single Cloud Run
+service and a single Cloud SQL instance. The app picks the site by the domain of the request and
+every site has its own database on the instance. Domains are listed in `locals.tf`. To host only
+one site, remove the other site's domains from that list.
+
 # How to contribute?
 
 ## 1. Make sure that your Google account has admin access to the Zosia GCP project
@@ -60,3 +65,10 @@ When you create the infrastructure, terraform will create a new database. This p
 ## 7. Create a super user account
 
 The easiest way to create a first user with admin privileges is to run the `createsuperuser` Cloud Run job from Web UI and set all the environment variables to the new user's data (like password, email, etc.). Just make sure to change this password later, since everyone with access to the GCP project will be able to view provided environment variables!
+
+The job creates the user on the site set in the `SITE` variable (`zosia` or `leosia`), run it once per site.
+
+## 8. Point the domains at Cloud Run
+
+Every domain in `locals.tf` has to be verified for the GCP project (https://cloud.google.com/run/docs/mapping-custom-domains)
+and its DNS records have to point at the values shown in the domain mapping.
